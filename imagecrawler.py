@@ -69,23 +69,3 @@ def search_images_urls(driver, search_keywords):
     return keyed_image_urls
 
 
-chrome_options = webdriver.ChromeOptions()
-#chrome_options.add_argument('headless')
-chrome_options.add_argument('--window-size=1024,1024')
-#chrome_options.add_argument("disable-gpu")
-chrome_options.add_argument("user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36")
-chrome_options.add_argument("--lang=en_US")
-#chrome_options.add_argument("--lang=ko_KR")
-
-driver = webdriver.Chrome('/home/booil/Downloads/chromedriver', chrome_options=chrome_options)
-driver.implicitly_wait(3)
-
-founds = search_images_urls(driver, ['얼룩말', '연필'])
-print(founds)
-
-
-"""
-결과 더보기
-<input class="ksb" value="결과 더보기" id="smb" data-lt="로드 중..." type="button" data-ved="0ahUKEwi8qae8vanfAhUH5LwKHdWIBT4QxdoBCIoC">
-<a href="https://www.google.com/imgres?imgurl=https%3A%2F%2Fimages.freeimages.com%2Fimages%2Fpremium%2Fpreviews%2F4642%2F46422546-zebra-tail.jpg&imgrefurl=https%3A%2F%2Fkr.freeimages.com%2Fpremium%2Fzebra-tail-1645948&docid=cLwRlTsZYWc6VM&tbnid=hFbKGYP_dua6VM%3A&vet=10ahUKEwic3eXZv6vfAhVFyLwKHYZaBPEQMwisAiheMF4..i&w=681&h=1024&bih=893&biw=1016&q=%EC%96%BC%EB%A3%A9%EB%A7%90&ved=0ahUKEwic3eXZv6vfAhVFyLwKHYZaBPEQMwisAiheMF4&iact=mrc&uact=8">
-"""
