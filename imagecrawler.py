@@ -42,29 +42,37 @@ def show_all_page(driver):
         driver.implicitly_wait(2.5 + random.random() * 2.0)
 
 
+def search_images_url(driver, search_keyword):
+    image_urls = []
+    driver.get('https://www.google.com/search?q=' + search_keyword + '&tbm=isch')
+    show_all_page(driver)
+    a_elements = driver.find_elements_by_tag_name('a')
+    for a_ele in a_elements:
+        jsname_attr = a_ele.get_attribute('jsname')
+        if jsname_attr != "hSRGPd":
+            continue
+        href_attr = a_ele.get_attribute('href')
+        if href_attr is None:
+            continue
+        href_urls = href_attr.split('?')
+        if len(href_urls) <= 1:
+            continue
+        split_urls = href_urls[1].split('&')
+        if 1 <= len(split_urls):
+            if split_urls[0].startswith('imgurl='):
+                imgurl = split_urls[0][7:]
+                imgurl = urllib.parse.unquote(imgurl)
+                image_urls.append(imgurl)
+    return image_urls
+
+
 def search_images_urls(driver, search_keywords):
+    if isinstance(search_keywords, str):
+        return search_images_url(driver, search_keywords)
+
     keyed_image_urls = { }
     for kw in search_keywords:
-        image_urls = []
-        driver.get('https://www.google.com/search?q=' + kw + '&tbm=isch')
-        show_all_page(driver)
-        a_elements = driver.find_elements_by_tag_name('a')
-        for a_ele in a_elements:
-            jsname_attr = a_ele.get_attribute('jsname')
-            if jsname_attr != "hSRGPd":
-                continue
-            href_attr = a_ele.get_attribute('href')
-            if href_attr is None:
-                continue
-            href_urls = href_attr.split('?')
-            if len(href_urls) <= 1:
-                continue
-            split_urls = href_urls[1].split('&')
-            if 1 <= len(split_urls):
-                if split_urls[0].startswith('imgurl='):
-                    imgurl = split_urls[0][7:]
-                    imgurl = urllib.parse.unquote(imgurl)
-                    image_urls.append(imgurl)
+        image_urls = search_images_url(driver, kw)
         keyed_image_urls[kw] = image_urls
     return keyed_image_urls
 
