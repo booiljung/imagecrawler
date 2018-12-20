@@ -1,10 +1,17 @@
+"""This module retrieves images from search engines and stores them in { key: [], ...} data types and returns them.
+
+If the internet is slow, it may not change for 1 second.
+I do not know how to check because I indirectly crawl using selenium.
+"""
+
 import random
 from selenium import webdriver
 import urllib.parse
 
-# 인터넷이 느린 경우 1초동안 변화가 없을 수 있는데 다운로드 완료 한것으로 오판할 위험이 있음.
 
 def wait_page_downloading(driver):
+    """Wait for the web page to finish downloading.
+    """
     old_page = driver.page_source
     while True:
         driver.implicitly_wait(0.5 + random.random() * 1.0)
@@ -16,6 +23,8 @@ def wait_page_downloading(driver):
 
 
 def scroll_down_all(driver):
+    """Scroll down to the bottom of the web page until it is finished downloading.
+    """
     old_pos = driver.execute_script("return window.pageYOffset;")
     while True:
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -29,6 +38,9 @@ def scroll_down_all(driver):
 
 
 def show_all_page(driver):
+    """
+    Show all Google image search pages.
+    """
     wait_page_downloading(driver)
     while True:
         scroll_down_all(driver)
@@ -43,6 +55,9 @@ def show_all_page(driver):
 
 
 def google_search_func(driver, search_keyword):
+    """Search for keywords in the Google search engine.
+    If there is no browser instance, open a new instance and use the instance if it exists.
+    """
     driver.get('https://www.google.com/search?q=' + search_keyword + '&tbm=isch')
 
 
@@ -50,6 +65,9 @@ default_search_func = google_search_func
 
 
 def google_parse_func(driver):
+    """Parse Google image search results to get url of image as list.
+    Result is [ url, ... ]
+    """
     image_urls = []
     a_elements = driver.find_elements_by_tag_name('a')
     for a_ele in a_elements:
@@ -75,6 +93,9 @@ default_parse_func = google_parse_func
 
 
 def search_images_url(driver, search_keyword, search_func=None, parse_func=None):
+    """Query the search engine for a keyword to get the image URLs.
+    The result is a list data type.
+    """
     if search_func is None:
         search_func = default_search_func
     search_func(driver, search_keyword)
@@ -88,6 +109,10 @@ def search_images_url(driver, search_keyword, search_func=None, parse_func=None)
 
 
 def search_images_urls(driver, search_keywords, search_func=None, parse_func=None):
+    """Search engines sequentially query multiple keywords to obtain image URLs.
+    The result is the { key: [], ... } datatype.
+    search_keywords is either a keyword or a list of keywords.
+    """
     keyed_image_urls = { }
 
     if isinstance(search_keywords, str):
@@ -98,5 +123,4 @@ def search_images_urls(driver, search_keywords, search_func=None, parse_func=Non
         image_urls = search_images_url(driver, kw, search_func, parse_func)
         keyed_image_urls[kw] = image_urls
     return keyed_image_urls
-
 
